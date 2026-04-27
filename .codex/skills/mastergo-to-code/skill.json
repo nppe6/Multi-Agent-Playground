@@ -1,0 +1,37 @@
+{
+  "name": "mastergo-to-code",
+  "version": "1.0.0",
+  "description": "从 MasterGo 设计稿生成代码，自动处理图片资源（小图本地存储，大图上传 OSS）",
+  "author": "claude AI",
+  "commands": [
+    {
+      "name": "mastergo-cut",
+      "aliases": ["mg2c", "mastergo"],
+      "description": "从 MasterGo 设计稿切图并生成代码"
+    }
+  ],
+  "options": [
+    {
+      "name": "threshold",
+      "type": "string",
+      "default": "50",
+      "description": "图片大小阈值（KB），超过此值的图片上传到 OSS"
+    },
+    {
+      "name": "force-local",
+      "type": "boolean",
+      "default": false,
+      "description": "强制所有图片保存到本地"
+    },
+    {
+      "name": "force-oss",
+      "type": "boolean",
+      "default": false,
+      "description": "强制所有图片上传到 OSS"
+    }
+  ],
+  "requirements": {
+    "node": ">=18.0.0",
+    "dependencies": ["minio"]
+  }
+}

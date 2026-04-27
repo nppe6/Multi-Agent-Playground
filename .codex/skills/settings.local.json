@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s \"https://api.github.com/repos/vuejs-ai/skills/contents/skills/vue-best-practices\")",
+      "mcp__mastergo-magic-mcp__mcp__getDsl"
+    ]
+  }
+}
