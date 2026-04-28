@@ -24,9 +24,29 @@
 - 可观察性：把 `TraceEvent` 作为第一等契约，先保证每次运行都能解释“谁在做、为什么路由、产生了什么结果”。
 - 最小验收：能创建 2 个 Agent，创建一个 Router 或 Planner 工作流，发送一次用户请求，看到聊天结果、图高亮和 Trace 列表。
 
+架构决策：
+
+- 最终项目继续使用 NestJS，不切换到 Koa2 作为主后端框架。
+- 学习讲解时可以用 Node.js/Koa2 的底层模型帮助理解，例如 stream、EventEmitter、AsyncIterator、SSE header 和中间件。
+- 如果某个机制太抽象，可以先做 Koa2 极简 demo 作为垫脚石，但复刻版代码仍回到 NestJS Controller/Service/Module 组织。
+- 决策理由：这个项目的主要复杂度来自 Agent、Workflow、Run、Trace、Settings、Runtime 等模块协作，不是单个 HTTP 路由；NestJS 的模块化和依赖注入更适合作为最终工程形态。
+
 ## 假设起点
 
 假设你具备基础的 Python/JavaScript/Vue 阅读能力，并希望把读到的架构迁移到 NestJS + Vue。路线会从产品闭环开始，再进入后端、前端、桌面端和扩展实践；每个关键模块都会保留一条“原项目理解”和一条“NestJS 复刻映射”。
+
+## 前置知识地图与基线
+
+这份路线会采用“项目主线 + 前置知识即时补课”的方式推进，不会先开一整门前置课。基线会随着学习更新，详细进度记录在 `learning-notes/multi-agent-playground-progress.md`。
+
+| 前置知识 | 支撑章节 | 为什么重要 | 当前基线 | 补课策略 |
+| --- | --- | --- | --- | --- |
+| Vue 3 组件数据流、顶层状态管理 | Chapter 1, 5, 6 | 读懂 `App.vue` 为什么统一管理运行状态，以及 Graph/Trace 如何被驱动。 | familiar | 进入复杂组件前，用当前项目例子复盘 props/emits/composable/store。 |
+| fetch、SSE、AbortController、ReadableStream | Chapter 1, 5 | 读懂前端如何发起流式运行、停止旧请求、解析增量事件。 | familiar，ReadableStream 细节待补 | 读 `frontend/src/api.js` 时做短 capsule，不脱离源码。 |
+| 异步竞态与 UI 写入资格 | Chapter 1, 5 | 理解 `replayToken` 为什么不是多余逻辑，避免旧请求污染新 UI。 | familiar | 用“先发 A 再发 B，A 晚返回”的场景做二刷练习。 |
+| FastAPI StreamingResponse、queue、thread | Chapter 1, 4 | 读懂后端如何把同步/阻塞的工作流事件转成 SSE。 | aware | 进入 `/api/runs/stream` 前讲最小模型，再逐行读源码。 |
+| LangGraph / 状态机 / DAG 控制流 | Chapter 4 | 理解五种 workflow 的节点、边、条件路由和最终汇总。 | zero/aware | Chapter 4 前先补“状态、节点、边、条件跳转”的最小 capsule。 |
+| NestJS Controller / Service / SSE / 数据层 | Chapter 1-8 | 最终要把 FastAPI + LangGraph 思路翻译到 NestJS + Vue。 | 待自评 | 每章只迁移当前模式；完成 Chapter 1 后先画 `RunsController.stream()`。 |
 
 ## 鸟瞰图
 
