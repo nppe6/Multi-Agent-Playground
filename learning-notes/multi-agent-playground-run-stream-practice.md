@@ -10,6 +10,31 @@
 trace -> trace -> final -> end
 ```
 
+## 实现交接 Brief
+
+最小可运行目标：
+
+- 创建一个独立 `run-stream-demo/api` NestJS 服务。
+- 实现 `POST /runs/stream`。
+- 请求体包含 `workflowId` 和 `userInput`。
+- 后端不接真实 LLM、不接真实 Agent、不接数据库，只模拟两条 trace、一个 final、一个 end。
+
+刻意排除：
+
+- 不做登录和用户隔离。
+- 不做真实 Workflow 编辑器。
+- 不做数据库持久化。
+- 不做真实模型调用。
+- 不做完整 Graph UI，只先验证事件协议。
+
+检查点：
+
+1. DTO 完成：能用 TypeScript 表达 `trace/final/error/end`。
+2. Runtime 完成：`WorkflowRuntimeService.dispatch()` 能通过 `onTrace` 发出模拟 Trace，并返回 final。
+3. Controller 完成：`POST /runs/stream` 能设置 SSE header，并用 `res.write()` 输出 `event/data`。
+4. 命令行验证：用 curl 或 fetch 能看到 `trace -> final -> end`。
+5. 前端验证：Vue 页面能显示 Trace 列表、最终回复和 loading 结束。
+
 ## 你要学会的东西
 
 - 把原项目 `run_workflow_stream()` 翻译成 NestJS `RunsController.stream()`。

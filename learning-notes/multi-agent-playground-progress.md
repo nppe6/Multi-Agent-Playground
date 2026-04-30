@@ -2,7 +2,7 @@
 
 ## Resume Snapshot
 
-当前在 Chapter 1：产品闭环与启动路径，已完成前端 `handleRun()`、后端 `/api/runs/stream`、`queue -> Subject` 类比、`buffer` 解析 SSE frame，以及 NestJS 迁移映射。学习者已能说清 `TraceEvent` 让工作流不再黑盒，也能把 `WorkflowRuntimeService.dispatch()` 对应到原项目 `_dispatch_run()`。当前进入 Chapter 1 实战：最小 Run Stream 协议。练习目标是不接真实 LLM/Agent/DB，先用 NestJS + Vue 跑通 `trace -> trace -> final -> end`。下一次先打开 `learning-notes/multi-agent-playground-run-stream-practice.md`，再决定是建独立 `run-stream-demo/` 还是放进未来复刻项目。
+当前在 Chapter 1：产品闭环与启动路径，已完成前端 `handleRun()`、后端 `/api/runs/stream`、`queue -> Subject` 类比、`buffer` 解析 SSE frame，以及 NestJS 迁移映射。学习者已能说清 `TraceEvent` 让工作流不再黑盒，也能把 `WorkflowRuntimeService.dispatch()` 对应到原项目 `_dispatch_run()`。新版 skill 要求已补齐：技术翻译表、概念对照卡、实战交接 brief。当前进入 Chapter 1 实战：最小 Run Stream 协议。练习目标是不接真实 LLM/Agent/DB，先用 NestJS + Vue 跑通 `trace -> trace -> final -> end`。下一次先打开 `learning-notes/multi-agent-playground-run-stream-practice.md`，从创建 `run-stream-demo/api` 开始。
 
 ## 前置知识基线
 
@@ -36,7 +36,7 @@
 - 当前章节：Chapter 1：产品闭环与启动路径。
 - 当前小节：Chapter 1 实战：最小 Run Stream 协议。
 - 当前状态：进行中。
-- 下一次续学入口：打开实战 brief，先实现事件契约和假的 `WorkflowRuntimeService.dispatch()`。
+- 下一次续学入口：打开实战 brief，创建 `run-stream-demo/api`，先完成 DTO 与假的 `WorkflowRuntimeService.dispatch()`。
 - 对话回放：`learning-notes/multi-agent-playground-session-history.md`
 
 ## 已学习内容

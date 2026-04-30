@@ -72,6 +72,17 @@ data: {}
 
 最小实现可以先用 RxJS `Subject` 模拟 queue，等工作流复杂后再抽成事件总线。
 
+## 技术翻译表
+
+| 原项目概念 | NestJS / Node.js 对应 | 共同职责 | 注意事项 |
+| --- | --- | --- | --- |
+| `run_workflow_stream()` | `RunsController.stream()` | 接收运行请求，打开流式响应 | 原项目是 `POST + StreamingResponse`；NestJS 实战先用 `@Post + @Res()` 手写 SSE。 |
+| `_dispatch_run()` | `WorkflowRuntimeService.dispatch()` | 根据 workflow 定义执行运行逻辑，并在过程中产出 Trace | 不直接操作 HTTP response，避免运行时和传输层耦合。 |
+| `queue.Queue` | RxJS `Subject` / EventEmitter / AsyncIterator | 作为事件中转通道，连接生产者和消费者 | 这是职责类比，不是 API 等价；`queue` 是线程安全队列，`Subject` 是可观察事件流。 |
+| `event_stream()` | `res.write()` / `Observable<MessageEvent>` | 将内部事件格式化并推送给浏览器 | 如果需要 POST body，优先 `@Post + @Res()`；`@Sse()` 更适合 GET 监听。 |
+| `TraceEvent` | `TraceEventDto` | 描述运行过程证据，驱动 Trace 与 Graph | `title/detail` 给人看，`type/payload` 给程序做分类和高亮。 |
+| `trace/final/error/end` | `RunStreamEvent` 联合类型 | 定义前后端流式运行协议 | SSE 是运输方式，事件契约才是复刻核心。 |
+
 ## Node/Koa2 理解桥
 
 后续不用死记 Python 的 `threading + queue`。迁移到 Node.js 时，可以把它理解成三个角色：
@@ -127,6 +138,32 @@ RunsController.stream()
   - 修正：这里的 `queue` 是运行期内存缓冲，不是持久化。
 - 误区：有 `AbortController` 就不需要后端 `end`。
   - 修正：`AbortController` 是客户端取消；`end` 是服务端正常结束信号，两者解决的问题不同。
+
+## 概念对照卡
+
+### `AbortController` vs `replayToken`
+
+- `AbortController` handles: 取消旧网络请求。
+- `replayToken` handles: 判断旧异步回调是否仍有资格写入当前 UI。
+- Confusion to avoid: 以为请求取消就能完全避免旧 UI 写入；实际旧回调仍可能晚到。
+- Project example: `App.vue` 的运行取消和身份校验。
+- Target-stack mapping: NestJS + Vue 复刻时仍需要前端取消控制和运行身份 token。
+
+### Event Channel vs SSE Transport
+
+- Event channel handles: 在后端内部转交业务事件，例如 `queue.Queue` 或 `Subject`。
+- SSE transport handles: 通过 HTTP 按 `event/data` 格式把事件推给浏览器。
+- Confusion to avoid: 把 `Subject` 当成 SSE 本身；它只是 SSE 前面的事件通道。
+- Project example: `stream_queue.put(...)` 到 `event_stream().yield(...)`。
+- Target-stack mapping: `progressSubject.next(...)` 产出事件，`res.write(...)` 或 `@Sse()` 输出 SSE。
+
+### `title/detail` vs `type/payload`
+
+- `title/detail` handles: 给用户看的展示文案。
+- `type/payload` handles: 给程序做分类、Graph 高亮、节点跳转和结构化处理。
+- Confusion to avoid: 让前端根据 `type + payload` 拼所有文案，会让 TraceViewer 变成业务翻译器。
+- Project example: `TraceViewer.vue` 展示标题和详情，同时读取 `payload.node_id`。
+- Target-stack mapping: `TraceEventDto` 保留展示层和结构层分离。
 
 ## 检查题
 
